@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DASPOWEAR — Виниловая макси-юбка</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;1,9..144,200;1,9..144,300&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/global.css" />
+  <link rel="stylesheet" href="/css/product.css" />
+</head>
+<body>
+  <div id="nav-mount"></div>
+
+  <main class="page">
+    <div class="product-page" id="product-page">
+      <div class="gallery" id="gallery">
+        <div class="gallery-img skeleton"></div>
+        <div class="gallery-img skeleton"></div>
+      </div>
+      <div class="product-info" id="product-info">
+        <div class="product-breadcrumb">Загрузка…</div>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-mount"></div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/shell.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const productId = parseInt(params.get('id'), 10);
+
+    let currentProduct = null;
+    let selectedSize = null;
+
+    (async () => {
+      if (!productId) {
+        document.getElementById('product-info').innerHTML = '<p>Товар не найден.</p>';
+        return;
+      }
+      try {
+        const p = await window.DASPO.API.getProduct(productId);
+        currentProduct = p;
+        document.title = `DASPOWEAR — ${p.name}`;
+        renderProduct(p);
+      } catch (e) {
+        document.getElementById('product-info').innerHTML =
+          `<p style="color:#c63d12; font-size:0.85rem;">Ошибка: ${e.message}</p>`;
+      }
+    })();
+
+    function renderProduct(p) {
+      const { Cart, fmt } = window.DASPO;
+      const gallery = document.getElementById('gallery');
+      gallery.innerHTML = p.images.map(src => `
+        <div class="gallery-img"><img src="${src}" alt="${p.name}" loading="lazy" /></div>
+      `).join('');
+
+      const info = document.getElementById('product-info');
+      info.innerHTML = `
+        <div class="product-breadcrumb">
+          <a href="/index.html">Магазин</a> / ${p.category === 'skirts' ? 'Юбки' : (p.category || 'Одежда')} / ${p.sku}
+        </div>
+        <div>
+          <h1 class="product-name">${p.name}</h1>
+          <div class="product-subtitle">${p.subtitle || ''}</div>
+        </div>
+        <div class="product-price">${fmt.rub(p.price)}</div>
+
+        <div class="size-picker">
+          <div class="size-picker-label">
+            <span>Выберите размер</span>
+            <a href="/sizes.html" target="_blank">Размерная сетка</a>
+          </div>
+          <div class="size-options" id="size-options">
+            ${(p.sizes || []).map(s => `<button class="size-btn" data-size="${s}">${s}</button>`).join('')}
+          </div>
+        </div>
+
+        <div class="product-actions">
+          <button class="btn btn-block" id="add-to-bag" disabled>Выберите размер</button>
+          <button class="btn btn-ghost btn-block" id="buy-now" disabled>Купить сейчас</button>
+        </div>
+
+        <div class="product-trust">
+          <span>Бесплатная доставка по ЕС</span>
+          <span>Возврат 14 дней</span>
+        </div>
+
+        <p class="product-description">${p.description || ''}</p>
+
+        <div class="product-accordion">
+          <details open>
+            <summary>Материалы</summary>
+            <div class="acc-content">${p.materials || '—'}</div>
+          </details>
+          <details>
+            <summary>Уход</summary>
+            <div class="acc-content">${p.care || '—'}</div>
+          </details>
+          <details>
+            <summary>Доставка и возврат</summary>
+            <div class="acc-content">
+              Бесплатная доставка по Европе. Возврат в течение 14 дней для нового товара
+              с оригинальными ярлыками. Отправка из ателье — 3–5 рабочих дней.
+            </div>
+          </details>
+          <details>
+            <summary>От ателье</summary>
+            <div class="acc-content">
+              Вещи Daspowear выпускаются ограниченными партиями. Незначительные различия в цвете,
+              поверхности и отделке — это часть объекта, а не дефект.
+            </div>
+          </details>
+        </div>
+      `;
+
+      document.querySelectorAll('.size-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          selectedSize = btn.dataset.size;
+          const addBtn = document.getElementById('add-to-bag');
+          addBtn.disabled = false;
+          addBtn.textContent = 'В корзину';
+          document.getElementById('buy-now').disabled = false;
+        });
+      });
+
+      document.getElementById('add-to-bag').addEventListener('click', () => {
+        if (!selectedSize) return;
+        Cart.add({
+          product_id: p.id,
+          size: selectedSize,
+          quantity: 1,
+          name: p.name,
+          price: p.price,
+          image: p.images[0],
+        });
+        window.DASPO.openCart();
+      });
+
+      document.getElementById('buy-now').addEventListener('click', () => {
+        if (!selectedSize) return;
+        Cart.add({
+          product_id: p.id,
+          size: selectedSize,
+          quantity: 1,
+          name: p.name,
+          price: p.price,
+          image: p.images[0],
+        });
+        window.DASPO.openCheckout();
+      });
+    }
+  </script>
+</body>
+</html>

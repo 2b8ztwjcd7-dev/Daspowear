@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DASPOWEAR — Заказ</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;1,9..144,200;1,9..144,300&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/global.css" />
+
+  <style>
+    .success-wrap {
+      min-height: calc(100vh - 60px);
+      padding: 6rem var(--pad);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+    }
+    .success-eyebrow {
+      font-size: 0.7rem; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.22em;
+      color: var(--muted); margin-bottom: 2rem;
+    }
+    .success-title {
+      font-family: var(--font-display);
+      font-weight: 200;
+      font-size: clamp(2.6rem, 7vw, 5.5rem);
+      line-height: 1.05; letter-spacing: -0.03em;
+      margin-bottom: 1.4rem;
+    }
+    .success-title em { font-style: italic; font-weight: 300; }
+    .success-body {
+      font-size: 1.05rem; max-width: 48ch;
+      line-height: 1.55; color: var(--ink-soft);
+      margin-bottom: 3rem;
+    }
+    .success-meta {
+      font-size: 0.85rem;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 1.4rem 0;
+      max-width: 520px; width: 100%;
+      margin-bottom: 2.4rem;
+    }
+    .success-meta .row {
+      display: flex; justify-content: space-between;
+      padding: 0.3rem 0;
+    }
+    .success-meta .row.total {
+      border-top: 1px solid var(--line);
+      margin-top: 0.6rem; padding-top: 0.7rem;
+      font-weight: 500; text-transform: uppercase;
+      letter-spacing: 0.14em; font-size: 0.9rem;
+    }
+    .status-pill {
+      display: inline-block;
+      padding: 0.25rem 0.7rem;
+      border: 1px solid currentColor;
+      font-size: 0.68rem; letter-spacing: 0.16em;
+      text-transform: uppercase; font-weight: 500;
+    }
+    .status-succeeded { color: #1f6f3b; }
+    .status-pending { color: #b07d00; }
+    .status-canceled, .status-failed { color: #c63d12; }
+    .status-waiting_for_capture { color: #b07d00; }
+  </style>
+</head>
+<body>
+  <div id="nav-mount"></div>
+
+  <main class="page">
+    <div class="success-wrap">
+      <div class="success-eyebrow" id="success-eyebrow">Проверяем платёж</div>
+      <h1 class="success-title" id="success-title"><em>Одну</em> минуту.</h1>
+      <p class="success-body" id="success-body">
+        Подтверждаем ваш заказ.
+      </p>
+      <div class="success-meta" id="success-meta" style="display:none;"></div>
+      <a href="/index.html" class="btn btn-ghost">Вернуться в магазин</a>
+    </div>
+  </main>
+
+  <div id="footer-mount"></div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/shell.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const orderUid = params.get('order') || localStorage.getItem('daspowear_last_order');
+
+    async function check() {
+      const { API, Cart } = window.DASPO;
+      if (!orderUid) {
+        document.getElementById('success-title').textContent = 'Заказ не найден.';
+        document.getElementById('success-eyebrow').textContent = '—';
+        document.getElementById('success-body').textContent = 'Не удалось найти ваш заказ.';
+        return;
+      }
+      try {
+        const order = await API.getOrder(orderUid);
+        renderOrder(order);
+        if (order.status === 'pending') {
+          setTimeout(check, 2500);
+        } else if (order.status === 'succeeded') {
+          Cart.clear();
+        }
+      } catch (e) {
+        document.getElementById('success-title').textContent = 'Заказ не найден.';
+        document.getElementById('success-eyebrow').textContent = 'Ошибка';
+        document.getElementById('success-body').textContent = e.message;
+      }
+    }
+
+    function renderOrder(order) {
+      const { fmt } = window.DASPO;
+      const titles = {
+        succeeded: '<em>Спасибо</em>.',
+        pending: '<em>Почти</em> готово.',
+        canceled: 'Заказ <em>отменён</em>.',
+        failed: 'Что-то <em>пошло</em> не так.',
+        waiting_for_capture: '<em>Почти</em> готово.',
+      };
+      const eyebrows = {
+        succeeded: 'Заказ подтверждён',
+        pending: 'Ожидаем подтверждения',
+        canceled: 'Отменён',
+        failed: 'Ошибка',
+        waiting_for_capture: 'Обрабатываем',
+      };
+      const bodies = {
+        succeeded: 'Ваша вещь готовится к отправке. На email отправлен фискальный чек.',
+        pending: 'Ждём подтверждения от ЮKassa. Страница обновится автоматически.',
+        canceled: 'Платёж был отменён. Ваша корзина сохранена.',
+        failed: 'Не удалось завершить платёж. Попробуйте ещё раз.',
+        waiting_for_capture: 'Платёж авторизован — завершаем операцию.',
+      };
+      const statusLabels = {
+        succeeded: 'Оплачен',
+        pending: 'Ожидание',
+        canceled: 'Отменён',
+        failed: 'Ошибка',
+        waiting_for_capture: 'Обработка',
+      };
+
+      document.getElementById('success-title').innerHTML = titles[order.status] || 'Заказ принят.';
+      document.getElementById('success-eyebrow').textContent = eyebrows[order.status] || order.status;
+      document.getElementById('success-body').textContent = bodies[order.status] || '';
+
+      const meta = document.getElementById('success-meta');
+      meta.style.display = 'block';
+      const itemsHtml = order.items.map(it => `
+        <div class="row"><span>${it.product_name}${it.size ? ' · ' + it.size : ''} × ${it.quantity}</span><span>${fmt.rub(it.unit_price * it.quantity)}</span></div>
+      `).join('');
+      meta.innerHTML = `
+        <div class="row"><span>Заказ</span><span>${order.order_uid.slice(0,8).toUpperCase()}</span></div>
+        <div class="row"><span>Статус</span><span class="status-pill status-${order.status}">${statusLabels[order.status] || order.status}</span></div>
+        ${itemsHtml}
+        <div class="row total"><span>Итого</span><span>${fmt.rub(order.amount)}</span></div>
+      `;
+    }
+
+    check();
+  </script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DASPOWEAR — Доставка и возврат</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;1,9..144,200;1,9..144,300&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/global.css" />
+
+  <style>
+    .doc {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 4rem var(--pad) 4rem;
+    }
+    .doc h1 {
+      font-family: var(--font-display);
+      font-weight: 200;
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: -0.025em;
+      margin-bottom: 0.6rem;
+    }
+    .doc h1 em { font-style: italic; font-weight: 300; }
+    .doc .doc-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 3rem;
+    }
+    .doc h2 {
+      font-family: var(--font-display);
+      font-weight: 300;
+      font-size: 1.4rem;
+      margin: 2.4rem 0 1rem;
+    }
+    .doc p, .doc li {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--ink-soft);
+      margin-bottom: 0.8rem;
+    }
+    .doc ul {
+      padding-left: 1.4rem;
+      margin-bottom: 1.2rem;
+    }
+    .back {
+      display: inline-block;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+    .back:hover { color: var(--ink); }
+  </style>
+</head>
+<body>
+  <div id="nav-mount"></div>
+
+  <main class="page">
+    <article class="doc">
+      <a href="/index.html" class="back">← Назад</a>
+      <div class="doc-eyebrow">Раздел · Доставка и возврат</div>
+      <h1>Доставка<br>и <em>возврат</em>.</h1>
+
+      <h2>Доставка</h2>
+      <p>
+        Доставка осуществляется любыми удобными вам транспортными компаниями
+        (СДЭК, Boxberry, Почта России, PickPoint, DPD) и в среднем занимает
+        не более 10 дней с момента отправки.
+      </p>
+      <p>
+        После оплаты и сборки заказа мы пришлём вам трек-номер на указанный
+        email — отслеживать посылку можно на сайте перевозчика.
+      </p>
+      <ul>
+        <li>Сборка заказа — 1–3 рабочих дня</li>
+        <li>Доставка по Москве и СПб — 1–3 дня</li>
+        <li>Доставка по России — до 10 дней</li>
+        <li>Международная доставка — до 21 дня</li>
+      </ul>
+
+      <h2>Возврат</h2>
+      <p>
+        Возврат принимается в течение <strong>14 дней</strong> с момента получения
+        заказа. Вещь должна быть в оригинальном состоянии — без следов носки,
+        с заводскими ярлыками и в упаковке.
+      </p>
+      <p>
+        Для возврата напишите нам на почту с темой «Возврат» — мы пришлём
+        инструкцию и реквизиты для отправки. После получения и проверки
+        вещи деньги вернутся на ту же карту, которой вы оплачивали, в течение
+        3–10 рабочих дней.
+      </p>
+
+      <h2>Что не подлежит возврату</h2>
+      <ul>
+        <li>Вещи с явными следами носки или стирки</li>
+        <li>Вещи без ярлыков или упаковки</li>
+        <li>Заказы, переданные третьим лицам</li>
+      </ul>
+    </article>
+  </main>
+
+  <div id="footer-mount"></div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/shell.js"></script>
+</body>
+</html>

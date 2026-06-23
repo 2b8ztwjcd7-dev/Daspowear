@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: daspowear
+    runtime: python
+    plan: free
+    region: frankfurt
+    rootDir: backend
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: YOOKASSA_SHOP_ID
+        value: "1368669"
+      - key: YOOKASSA_SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        value: "sqlite:////tmp/daspowear.db"
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: RETURN_URL
+        sync: false

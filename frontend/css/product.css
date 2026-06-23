@@ -1,0 +1,191 @@
+.product-page {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  min-height: calc(100vh - 60px);
+}
+@media (max-width: 900px) {
+  .product-page { grid-template-columns: 1fr; }
+}
+
+.gallery {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-soft);
+  border-right: 1px solid var(--line);
+}
+.gallery-img {
+  width: 100%;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-soft);
+}
+.gallery-img:last-child { border-bottom: none; }
+.gallery-img img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+.product-info {
+  padding: 3.5rem var(--pad);
+  position: sticky;
+  top: 60px;
+  align-self: start;
+  max-height: calc(100vh - 60px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+@media (max-width: 900px) {
+  .product-info { position: static; max-height: none; padding-top: 3rem; }
+}
+
+.product-info::-webkit-scrollbar { width: 4px; }
+.product-info::-webkit-scrollbar-thumb { background: var(--ink); }
+.product-info::-webkit-scrollbar-track { background: transparent; }
+
+.product-breadcrumb {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  font-weight: 500;
+}
+.product-breadcrumb a:hover { color: var(--ink); }
+
+.product-name {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+}
+.product-subtitle {
+  font-size: 0.95rem;
+  color: var(--muted);
+  margin-top: 0.3rem;
+  line-height: 1.4;
+}
+
+.product-price {
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.size-picker {
+  display: flex; flex-direction: column; gap: 0.7rem;
+  margin-top: 0.6rem;
+}
+.size-picker-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  font-weight: 500;
+}
+.size-picker-label a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.size-picker-label a:hover { opacity: 0.5; }
+
+.size-options {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+.size-btn {
+  border: 1px solid var(--line);
+  padding: 0.85rem 0;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  background: var(--bg);
+  color: var(--ink);
+  transition: all 0.18s;
+}
+.size-btn:hover {
+  border-color: var(--ink);
+}
+.size-btn.active {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+}
+.size-btn.disabled {
+  opacity: 0.3;
+  text-decoration: line-through;
+  pointer-events: none;
+}
+
+.product-actions {
+  display: flex; flex-direction: column; gap: 0.55rem;
+  margin-top: 0.4rem;
+}
+
+.product-description {
+  font-size: 0.94rem;
+  line-height: 1.7;
+  color: var(--ink-soft);
+  margin-top: 0.4rem;
+}
+
+.product-trust {
+  display: flex;
+  gap: 1.4rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  font-weight: 500;
+}
+.product-trust span { display: inline-flex; align-items: center; gap: 0.4rem; }
+.product-trust span::before {
+  content: "";
+  width: 6px; height: 6px;
+  background: var(--ink);
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.product-accordion {
+  display: flex;
+  flex-direction: column;
+}
+.product-accordion details {
+  border-bottom: 1px solid var(--line);
+}
+.product-accordion summary {
+  padding: 1.1rem 0;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.74rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+.product-accordion summary::-webkit-details-marker { display: none; }
+.product-accordion summary::after {
+  content: "+";
+  font-size: 1.1rem;
+  font-weight: 300;
+  transition: transform 0.2s;
+}
+.product-accordion details[open] summary::after { content: "−"; }
+.product-accordion .acc-content {
+  padding-bottom: 1.2rem;
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
